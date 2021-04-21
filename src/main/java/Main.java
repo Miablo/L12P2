@@ -1,3 +1,12 @@
+import com.sun.jdi.Bootstrap;
+import com.sun.jdi.VirtualMachine;
+import com.sun.jdi.connect.Connector;
+import com.sun.jdi.connect.LaunchingConnector;
+
+import javax.swing.*;
+import java.io.*;
+import java.util.Map;
+
 /**
  *
  * Main class used as driver
@@ -13,9 +22,13 @@ public class Main {
      */
     public static void main(String[] args) {
         GUI gui = new GUI();
-        // init Window
-        gui.createWindow();
-        // show window
-        gui.setVisible(true);
+
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                // show window
+                gui.setVisible(true);
+            }
+        });
     }
+
 }
