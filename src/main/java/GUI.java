@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 
 import com.sun.jdi.Bootstrap;
 import com.sun.jdi.VirtualMachine;
+import com.sun.jdi.connect.Connector;
 import com.sun.jdi.connect.LaunchingConnector;
 import com.sun.jdi.connect.Connector.Argument;
 import java.awt.event.*;
@@ -29,6 +30,18 @@ import javax.swing.event.ListSelectionListener;
  * @see java.awt.event.ActionEvent
  * @see java.awt
  * @see javax.swing
+ * @see com.sun.jdi.Bootstrap
+ * @see com.sun.jdi.VirtualMachine
+ * @see com.sun.jdi.connect.LaunchingConnector
+ * @see com.sun.jdi.connect.Connector.Argument
+ * @see java.awt.event
+ * @see java.io
+ * @see java.net.URL
+ * @see java.net.URLClassLoader
+ * @see java.util.Hashtable
+ * @see java.util.Map
+ * @see javax.swing.event.ListSelectionEvent
+ * @see javax.swing.event.ListSelectionListener
  *
  */
 public class GUI extends JFrame implements ActionListener {
@@ -36,6 +49,8 @@ public class GUI extends JFrame implements ActionListener {
 
     JPanel window; // main window
     BorderLayout borderLayout1 = new BorderLayout();
+
+    ClassNameFilter filter = new ClassNameFilter();
 
     JToolBar header = new JToolBar(); // top toolbar showing current open class
 
@@ -82,7 +97,6 @@ public class GUI extends JFrame implements ActionListener {
         this.setSize(new Dimension(691, 602));
         this.setTitle("Lab 11 Q3 Testing Tool GUI ");
         // Begin menubar //
-        this.setTitle("Frame Title");
         this.fileMenu.setText("File");
         this.fileExit.setText("Exit");
         this.fileExit.addActionListener(new ActionListener() {
@@ -99,6 +113,7 @@ public class GUI extends JFrame implements ActionListener {
                 Openbtn_actionPerformed(e);
             }
         });
+
         this.openBtn.setText("Open File");
         this.closeBtn.setText("Close File");
 
@@ -115,7 +130,7 @@ public class GUI extends JFrame implements ActionListener {
                     rightTextArea.setText(skelStringArr[0]);
                     runCounter.setText(skelStringArr[1] + "\n    ");
                 } catch (Exception var9) {
-                    System.out.println(var9);
+                    var9.printStackTrace();
                 }
             }
         });
@@ -137,7 +152,7 @@ public class GUI extends JFrame implements ActionListener {
                     Process process = vm.process();
                     vm.setDebugTraceMode(0);
                     displayRemoteOutput(process.getInputStream());
-                   // mt = new MyThread(vm, false, dir.getName(), fileArray.length, this);
+                    mt = new MyThread(vm, false, dir.getName(), fileArray.length, this);
                 } catch (Exception var9) {
                     System.out.println(e);
                 }
@@ -240,27 +255,29 @@ public class GUI extends JFrame implements ActionListener {
     }
 
     public void Openbtn_actionPerformed(ActionEvent e) {
-        jfchooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        int returnVal = jfchooser.showOpenDialog(this);
+
+        this.jfchooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        int returnVal = this.jfchooser.showOpenDialog(this);
         if (returnVal == 0) {
-            dir = jfchooser.getSelectedFile();
-            // fileArray = dir.listFiles(filter);
+            this.dir = this.jfchooser.getSelectedFile();
+            this.fileArray = this.dir.listFiles(this.filter);
             DefaultListModel dlm = new DefaultListModel();
 
-            for(int i = 0; i < (fileArray != null ? fileArray.length : 0); ++i) {
-                dlm.add(i, fileArray[i].getName());
+            for(int i = 0; i < (this.fileArray != null ? this.fileArray.length : 0); ++i) {
+                dlm.add(i, this.fileArray[i].getName());
             }
 
-            classList.setModel(dlm);
+            this.classList.setModel(dlm);
 
             try {
-                URL u = dir.getParentFile().toURL();
-                urls[0] = u;
-                classLoader = new URLClassLoader(urls);
+                URL u = this.dir.getParentFile().toURL();
+                this.urls[0] = u;
+                this.classLoader = new URLClassLoader(this.urls);
             } catch (Exception var6) {
-                System.out.println(var6);
+                var6.printStackTrace();
             }
         }
+
     }
 
     @Override

@@ -2,6 +2,7 @@ import com.sun.jdi.*;
 import com.sun.jdi.event.*;
 import com.sun.jdi.request.*;
 
+import java.awt.event.ActionListener;
 import java.util.Hashtable;
 
 public class MyThread extends Thread {
@@ -21,11 +22,24 @@ public class MyThread extends Thread {
     int numClasses;
     String pkgName;
 
+    boolean stopVM;
+    boolean isConnected = true;
+    int classNum;
+
+
     public MyThread(VirtualMachine vm, boolean stopOnVMStart, String pkgName, int numClasses) {
         this.vm = vm;
         this.stopOnVMStart = stopOnVMStart;
         this.numClasses = numClasses;
         this.pkgName = pkgName;
+        this.start();
+    }
+
+    public MyThread(VirtualMachine vm, boolean stopVM, String name, int length, ActionListener actionListener) {
+        this.vm = vm;
+        this.stopVM = stopVM;
+        this.classNum = length;
+        this.pkgName = name;
         this.start();
     }
 
