@@ -1,11 +1,4 @@
-import com.sun.jdi.Bootstrap;
-import com.sun.jdi.VirtualMachine;
-import com.sun.jdi.connect.Connector;
-import com.sun.jdi.connect.LaunchingConnector;
-
 import javax.swing.*;
-import java.io.*;
-import java.util.Map;
 
 /**
  *
@@ -16,19 +9,29 @@ import java.util.Map;
  */
 public class Main {
     /**
+     * Main Constructor
+     */
+    public Main(){
+        GUI gui = new GUI();
+
+        gui.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        gui.setVisible(true);
+    }
+
+    /**
      * main method creates windows
      *
      * @param args not used
      */
     public static void main(String[] args) {
-        GUI gui = new GUI();
 
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                // show window
-                gui.setVisible(true);
-            }
-        });
+        try{
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch(Exception mainEX) {
+            mainEX.printStackTrace();
+        }
+
+        new Main();
     }
 
 }
